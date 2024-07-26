@@ -51,10 +51,10 @@ extractor = SuperPoint(max_num_keypoints=1024).eval().to(device)
 matcher = LightGlue(features="superpoint").eval().to(device)
 
 # Set paths
-dataset_name = "sku100k_v2"
-query_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/sku100k_v2/query_images"
-class_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/sku100k_v2/reference_images"
-output_dir_path = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/sku100k_v2/out/top_1eval4"
+dataset_name = "MVPN_dataset"
+query_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/MVPN_dataset/query_images"
+class_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/MVPN_dataset/reference_images"
+output_dir_path = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/sku100k_v2/out/top_1eval"
 # Load reference images and query image
 reference_image_paths = [os.path.join(class_imgs_dir, path) for path in os.listdir(class_imgs_dir)]
 query_image_paths = [os.path.join(query_imgs_dir, path) for path in os.listdir(query_imgs_dir)]
