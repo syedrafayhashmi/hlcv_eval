@@ -54,7 +54,7 @@ matcher = LightGlue(features="superpoint").eval().to(device)
 dataset_name = "MVPN_dataset"
 query_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/MVPN_dataset/query_images"
 class_imgs_dir = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/MVPN_dataset/reference_images"
-output_dir_path = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/sku100k_v2/out/top_1eval"
+output_dir_path = f"/content/hlcv_eval/lightglue-benchmark_speed/datasets/MVPN_dataset/out/top_1eval"
 # Load reference images and query image
 reference_image_paths = [os.path.join(class_imgs_dir, path) for path in os.listdir(class_imgs_dir)]
 query_image_paths = [os.path.join(query_imgs_dir, path) for path in os.listdir(query_imgs_dir)]
@@ -130,9 +130,12 @@ with torch.no_grad():
         query_img_basename = os.path.basename(query_img_path)
         if filenames:
             top_match_path = next(iter(filenames.keys()))
-            top_match_basename = os.path.basename(top_match_path).split(".")
-         
-            if query_img_basename.split(".")[1] == top_match_basename[1]:
+            top_match_basename = os.path.basename(top_match_path).split("_")[:2]
+            query_img_basename_parts = query_img_basename.split("_")[:2]
+            print(top_match_basename)
+            print(query_img_basename_parts)
+
+            if "".join(query_img_basename_parts) == "".join(top_match_basename):
                 true_positive += 1
         
         # Calculate accuracy at runtime
@@ -143,4 +146,20 @@ end_time = time.time()
 print(f"Total time: {end_time - start_time:.2f} seconds")
 print("Query images processed: ", n_query_imgs)
 print("Total comparisons: ", n_query_imgs * len(ref_labels))
+print("Final Top 1 accuracy: ", accuracy)
+
+# Final accuracy calculation
+total_samples = len(os.listdir(output_dir_path))
+true_positive = 0
+for folder in os.listdir(output_dir_path):
+    imgs = os.listdir(os.path.join(output_dir_path, folder))
+    query_img = f"queryimg_{folder}"
+    imgs.remove(query_img)
+    if imgs:  # Ensure there is at least one reference image
+        print("".join(imgs[0].split("")[:2]))
+        print("".join(folder.split("")[:2]))
+        if "".join(imgs[0].split("")[:2]) == "".join(folder.split("")[:2]):
+            true_positive += 1
+
+accuracy = (true_positive / total_samples) * 100
 print("Final Top 1 accuracy: ", accuracy)
